@@ -98,6 +98,14 @@ class PostController extends Controller
             ];
         }
 
+        // If need to update specific fields only!
+        /* 
+            $id = $post->id;
+            $post = Post::find($id);
+            $post->title = $validatedData['title'];
+            $post->save();
+        */
+
         $post->update($validatedData);
         return [
             'error' => false,
