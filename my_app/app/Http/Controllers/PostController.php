@@ -29,14 +29,12 @@ class PostController extends Controller
     public function store(Request $request)
     {
         // create a new post:
-        $validatedData = $request->validate([
+        $payload = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required'
         ]);
 
-        info("Payload object is: ", $validatedData);
-
-        if(Post::where('title', $validatedData['title'])->exists()){
+        if(Post::where('title', $payload['title'])->exists()){
             return [
                 'error' => true,
                 'message' => 'Post with same title already exist!',
@@ -44,7 +42,15 @@ class PostController extends Controller
             ];
         }
 
-        $post = Post::create($validatedData);
+        // SAVE Before adding user_id to $fillable in Post model:
+        // $post = Post::create($payload);
+
+        // SAVE After adding user_id to $fillable in Post model:
+        $post = Post::create([
+            'user_id' => auth()->id(),
+            'title' => $payload['title'],
+            'description' => $payload['description']
+        ]);
         return [
             'error' => false,
             'message' => 'Post created successfully!',
@@ -82,15 +88,16 @@ class PostController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(Request $request, $id)
     {
         // updating a single post:
-        $validatedData = $request->validate([
+        $payload = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required'
         ]);
 
-        if(Post::where('title', $validatedData['title'])->exists()){
+        // if(Post::where('title', $validatedData['title'])->exists()){
+        if(Post::where('title', $payload['title'])->where('id', '!=', $id)->exists()){
             return [
                 'error' => true,
                 'message' => 'Post with same title already exist',
@@ -105,8 +112,18 @@ class PostController extends Controller
             $post->title = $validatedData['title'];
             $post->save();
         */
+    
+        $post = Post::find($id);
 
-        $post->update($validatedData);
+        if(!$post){
+            return [
+                'error' => true,
+                'message' => 'Post was not found',
+                'data' => null
+            ];
+        }
+
+        $post->update($payload);
         return [
             'error' => false,
             'message' => 'Post updated successfully!',
