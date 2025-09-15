@@ -19,7 +19,7 @@ class PostController extends Controller
         return [
             'error' => false,
             'message' => 'success',
-            'date' => $posts
+            'data' => $posts
         ];
     }
 
