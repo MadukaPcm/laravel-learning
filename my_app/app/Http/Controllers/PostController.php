@@ -14,6 +14,8 @@ class PostController extends Controller
     {
         // Get a list of all posts:
         // $posts = Post::all()->count();
+        // Post::take(10)->get();
+        // $posts = Post::paginate(10);
         $posts = Post::all();
 
         return [

@@ -20,7 +20,7 @@ class RoleMiddleware
                 "error" => true,
                 "message" => "Forbidden Unauthorized request",
                 "data": null
-            ]
+            ];
         }
 
         return $next($request);
